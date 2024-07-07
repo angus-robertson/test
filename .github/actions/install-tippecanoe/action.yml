@@ -3,7 +3,5 @@ description: 'Install tippecanoe into workflow`s environment'
 runs:
   using: "composite"
   steps:
-    - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
-      shell: bash
-    - run: tippecanoe.sh
+    - run: ${{ github.action_path }}/tippecanoe.sh
       shell: bash
