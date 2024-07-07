@@ -1,6 +1,0 @@
-name: 'Install Tippecanoe'
-description: 'Install tippecanoe into workflow`s environment'
-runs:
-  using: "composite"
-  steps:
-    - run: bash ${{ github.action_path }}/tippecanoe.sh
