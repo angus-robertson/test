@@ -9,3 +9,6 @@ jobs:
     steps:
       - name: Send greeting
         run: echo "Hello world!"
+
+      - name: Install tippecanoe
+        uses: ./.github/actions/install-tippecanoe
