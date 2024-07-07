@@ -10,5 +10,8 @@ jobs:
       - name: Send greeting
         run: echo "Hello world!"
 
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Install tippecanoe
         uses: ./.github/actions/install-tippecanoe
