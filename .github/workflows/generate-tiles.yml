@@ -24,7 +24,9 @@ jobs:
 
             - name: Install tippecanoe
               shell: bash
-              run: bash ./.github/actions/tippecanoe.sh
+              run: |
+                chmod -R 755 ./.github/actions
+                bash ./.github/actions/tippecanoe.sh
             
             - name: Setup GitHub Pages
               uses: actions/configure-pages@v4
