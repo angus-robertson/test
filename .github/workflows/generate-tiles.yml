@@ -2,7 +2,7 @@ name: Generate vectortiles from source data
 
 on:
     push:
-        branches: [$default-branch]
+        branches: [main]
 
     workflow_dispatch:
 
@@ -24,20 +24,14 @@ jobs:
 
             - name: Install tippecanoe
               shell: bash
-              run: | 
-                    git clone https://github.com/mapbox/tippecanoe.git
-                    cd tippecanoe
-                    make -j
-                    make install
+              run: bash ./.github/actions/tippecanoe.sh
             
             - name: Setup GitHub Pages
               uses: actions/configure-pages@v4
 
             - name: Generate tiles
               shell: bash
-              run: |
-                    mkdir ./client/dist/tiles
-                    tippecanoe --no-feature-limit --no-tile-size-limit --exclude-all --minimum-zoom=5 --maximum-zoom=g --output-to-directory "./client/dist/tiles" `find ./data -type f | grep .geojson`
+              run: bash ./.github/actions/generate-tiles.sh
 
             - name: Upload
               uses: actions/upload-pages-artifact@v3
