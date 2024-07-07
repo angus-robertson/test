@@ -1,14 +1,56 @@
 name: Generate vectortiles from source data
 
 on:
-  workflow_dispatch:
+    push:
+        branches: [$default-branch]
+
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+concurrency:
+    group: "pages"
+    cancel-in-progress: false
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
 
-      - name: Install tippecanoe
-        run: bash ./.github/actions/install-tippecanoe/tippecanoe.sh
+            - name: Install tippecanoe
+              shell: bash
+              run: | 
+                    git clone https://github.com/mapbox/tippecanoe.git
+                    cd tippecanoe
+                    make -j
+                    make install
+            
+            - name: Setup GitHub Pages
+              uses: actions/configure-pages@v4
+
+            - name: Generate tiles
+              shell: bash
+              run: |
+                    mkdir ./client/dist/tiles
+                    tippecanoe --no-feature-limit --no-tile-size-limit --exclude-all --minimum-zoom=5 --maximum-zoom=g --output-to-directory "./client/dist/tiles" `find ./data -type f | grep .geojson`
+
+            - name: Upload
+              uses: actions/upload-pages-artifact@v3
+              with:
+                path: "./client/dist"
+                    
+    deploy:
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4
